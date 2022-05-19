@@ -1,0 +1,155 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: phabricator
+data:
+  local.json: |
+    {
+      "cluster.mailers": [
+        {
+          "type": "mailgun",
+          "options": {
+            "domain": "mg.mozart.io",
+            "api-key": "api-xxx"
+          },
+          "key": "mailer"
+        }
+      ],
+      "diffusion.ssh-host": "code.mozart.io",
+      "diffusion.ssh-port": "22",
+      "diffusion.ssh-user": "git",
+      "metamta.default-address": "no-reply@mozart.io",
+      "mysql.host": "mariadb",
+      "mysql.pass": "COMPLEX_SECRET",
+      "mysql.port": "3306",
+      "mysql.user": "phabricator",
+      "notification.servers": [
+        {
+          "path": "/ws/",
+          "host": "code.mozart.io",
+          "protocol": "https",
+          "type": "client",
+          "port": 443
+        },
+        {
+          "port": 22281,
+          "host": "127.0.0.1",
+          "protocol": "http",
+          "type": "admin"
+        }
+      ],
+      "phabricator.base-uri": "https://code.mozart.io/",
+      "phd.user": "git",
+      "pygments.enabled": true,
+      "repository.default-local-path": "/data/repos",
+      "storage.default-namespace": "phabricator",
+      "storage.local-disk.path": "/data/files",
+      "storage.mysql-engine.max-size": 0
+    }
+  preamble.php: |
+    <?php
+    // We trust the answer of nginx.
+    $_SERVER['REMOTE_ADDR'] = $_SERVER['HTTP_X_FORWARDED_FOR'];
+
+    // Phabricator uses the HTTPS variable to determine the protocol.
+    if ($_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+        $_SERVER['HTTPS'] = true;
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: phabricator
+  name: phabricator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: phabricator
+  template:
+    metadata:
+      labels:
+        app: phabricator
+    spec:
+      containers:
+      - name: phabricator
+        image: zhegao/phabricator:latest
+        imagePullPolicy: Always
+        args: ["start"]
+        env:
+        # Set `true` to enable `bin/storage upgrade --force` 
+        # when starting
+        - name: DISABLE_STORAGE_UPGRADE
+          value: "false"
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        - containerPort: 22
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /data
+          name: data
+        - mountPath: /app/config/local.json
+          name: config
+          subPath: local.json
+        - mountPath: /app/phabricator/support/preamble.php
+          name: config
+          subPath: preamble.php
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: phabricator
+      - name: config
+        configMap:
+          name: phabricator
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: phabricator
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      name: www
+    - port: 22
+      protocol: TCP
+      name: ssh
+  selector:
+    app: phabricator
+  type: ClusterIP
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: phabricator
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: phabricator
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+      - code.mozart.io
+    secretName: mozart-tls
+  rules:
+  - host: code.mozart.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: phabricator
+            port:
+              number: 80
+
