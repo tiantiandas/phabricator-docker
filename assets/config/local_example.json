@@ -1,0 +1,38 @@
+{
+  "diffusion.ssh-user": "git",
+  "diffusion.ssh-port": 22,
+  "phd.user": "git",
+  "storage.local-disk.path": "/data/files",
+  "repository.default-local-path": "/data/repos",
+  "phabricator.base-uri": "https://foo.bar.com",
+  "storage.default-namespace": "phabricator",
+  "notification.servers": [
+    {
+      "type": "client",
+      "host": "foo.bar.com",
+      "port": 443,
+      "protocol": "https",
+      "path": "/ws/"
+    },
+    {
+      "type": "admin",
+      "host": "127.0.0.1",
+      "port": 22281,
+      "protocol": "http"
+    }
+  ],
+  "mysql.pass": "",
+  "mysql.user": "",
+  "mysql.port": "3306",
+  "mysql.host": "",
+  "cluster.mailers": [
+    {
+      "key": "our-mailer",
+      "type": "mailgun",
+      "options": {
+        "domain": "mg.foo.bar.com",
+        "api-key": "barz"
+      }
+    }
+  ]
+}
