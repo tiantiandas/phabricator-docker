@@ -1,0 +1,94 @@
+# Phabricator
+
+A very slim build of Phabricator, inspired by [RedpointGames](https://github.com/RedpointGames/phabricator). 
+
+
+## Deploy onto Kubernetes
+
+1. Deploy MariaDB
+
+```sh
+$ export MARIADB_ROOT_PASSWORD=<PASSWORD>
+$ helm install mariadb bitnami/mariadb \
+    --set image.tag=10.4 \
+    --set primary.persistence.size=8Gi \
+    --set primary.service.clusterIP=None \
+    --set auth.rootPassword=${MARIADB_ROOT_PASSWORD}
+```
+
+2. Deploy phabricator
+
+Configure the ConfigMap as your needs, like `domain`, `secret`, `mailer`, etc.
+
+```sh
+$ kubectl apply -f deploy/phabricator.yaml
+```
+
+3. SQL
+
+```sql
+CREATE USER `phabricator`@`10.244.%` IDENTIFIED BY "SECRET";
+GRANT USAGE ON *.* TO `phabricator`@`10.244.%`
+
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_nuance`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_phriction`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_phrequent`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_phragment`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_phortune`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_pholio`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_phlux`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_phame`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_multimeter`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_paste`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_passphrase`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_packages`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_owners`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_pastebin`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_policy`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_phurl`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_xhpast`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_worker`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_user`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_token`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_system`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_spaces`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_slowvote`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_search`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_repository`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_releeph`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_project`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_ponder`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_metamta`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_dashboard`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_almanac`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_daemon`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_countdown`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_conpherence`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_config`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_conduit`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_chatlog`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_calendar`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_cache`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_badges`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_auth`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_audit`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_differential`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_diviner`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_doorkeeper`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_maniphest`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_legalpad`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_xhprof`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_herald`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_harbormaster`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_fund`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_flag`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_file`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_feed`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_fact`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_drydock`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_draft`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_application`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_meta_data`.* TO `phabricator`@`10.244.%`;
+GRANT CREATE TEMPORARY TABLEs, DROP,SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER ON `phabricator_oauth_server`.* TO `phabricator`@`10.244.%`;
+```
+
