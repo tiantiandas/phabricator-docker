@@ -28,7 +28,7 @@ $ kubectl apply -f deploy/phabricator.yaml
 
 ```sql
 CREATE USER `phabricator`@`10.244.%` IDENTIFIED BY "SECRET";
-GRANT USAGE ON *.* TO `phabricator`@`10.244.%`
+GRANT USAGE ON *.* TO `phabricator`@`10.244.%`;
 
 GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, ALTER, CREATE TEMPORARY TABLES ON `phabricator\_%`.* TO `phabricator`@`10.244.%`;
 ```
