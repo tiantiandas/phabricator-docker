@@ -1,0 +1,33 @@
+{
+    "diffusion.ssh-host": "code.mozart.io",
+    "diffusion.ssh-port": "7999",
+    "diffusion.ssh-user": "git",
+    "metamta.default-address": "no-reply@mozart.io",
+    "mysql.host": "mariadb",
+    "mysql.pass": "phorge",
+    "mysql.port": "3306",
+    "mysql.user": "phorge",
+    "notification.servers": [
+      {
+        "path": "/ws/",
+        "host": "code.mozart.io",
+        "protocol": "https",
+        "type": "client",
+        "port": 443
+      },
+      {
+        "port": 22281,
+        "host": "127.0.0.1",
+        "protocol": "http",
+        "type": "admin"
+      }
+    ],
+    "phabricator.base-uri": "https://code.mozart.io/",
+    "phd.user": "git",
+    "pygments.enabled": true,
+    "repository.default-local-path": "/data/repos",
+    "storage.default-namespace": "phorge",
+    "storage.local-disk.path": "/data/files",
+    "storage.mysql-engine.max-size": 0
+  }
+  

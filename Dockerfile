@@ -48,8 +48,8 @@ RUN useradd git \
     && npm install ws
 
 COPY assets/ /app/
-RUN rm -f /etc/nginx/sites-enabled/* /etc/nginx/nginx.conf \
-    && ln -f /app/config/nginx.conf /etc/nginx/nginx.conf \
+RUN rm -f /etc/nginx/sites-enabled/* \
+    && ln -f /app/config/nginx.app.conf /etc/nginx/sites-enabled/app.conf \
     && rm -f /etc/php/${PHP_VERSION}/fpm/pool.d/* \
     && ln -sf /app/config/php-phabricator.conf /etc/php/${PHP_VERSION}/fpm/pool.d/phabricator.conf \
     && ln -sf /app/config/local.json /app/phabricator/conf/local/local.json \

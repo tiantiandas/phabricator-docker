@@ -1,0 +1,25 @@
+version: '3'
+services:
+
+  mariadb:
+    container_name: mariadb
+    image: mariadb:10.4
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: superpassword
+    volumes:
+      - ./data/mariadb:/var/lib/mysql
+      - ./config/mariadb/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  phorge:
+    container_name: phorge
+    image: zhegao/phorge:latest
+    restart: always
+    volumes:
+      - ./data/phabricator:/data
+      - ./config/phabricator/local.json:/app/config/local.json
+      - ./certs:/certs
+    ports:
+      - "7999:7999"
+      - "80:80"
+      - "443:443"
