@@ -40,9 +40,9 @@ RUN useradd git \
        /var/tmp/aphlict/pid/ \
        /var/log/aphlict/ \
     && cd /app \
-    && git clone https://github.com/phacility/arcanist.git \
+    && git clone https://we.phorge.it/source/arcanist.git \
     && rm -rf arcanist/.git \
-    && git clone https://github.com/phacility/phabricator.git \
+    && git clone https://we.phorge.it/source/phorge.git phabricator \
     && rm -rf phabricator/.git \
     && cd phabricator \
     && npm install ws
